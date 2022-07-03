@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Comment to try to break a test ! :D -->
+
+<world>
+	<country>
+		<city>
+			Kyoto
+		</city>
+		<city>
+			Tokyo
+		</city>
+	</country>
+</world>

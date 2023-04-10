@@ -1,4 +1,4 @@
-﻿using ReaderXML.common;
+﻿using ReaderXML.Common;
 
 namespace ReaderXML
 {
@@ -7,6 +7,21 @@ namespace ReaderXML
     /// </summary>
     public sealed class Reader
     {
+        private static readonly char[] charsToEscapes = new char[]
+        {
+                '\'',
+                '\"',
+                '\\',
+                '\0',
+                '\a',
+                '\b',
+                '\f',
+                '\n',
+                '\r',
+                '\t',
+                '\v',
+        };
+
         private string _xml = "";
         private string _content = "";
         private List<char> _flow = new() { ' ', ' ',  ' ', ' ', ' ', ' ', ' ' };
@@ -290,22 +305,7 @@ namespace ReaderXML
 
         private bool DetectAnyEscape(char characterToVerify)
         {
-            char[] allEscapes = new char[]
-            {
-                '\'',
-                '\"',
-                '\\',
-                '\0',
-                '\a',
-                '\b',
-                '\f',
-                '\n',
-                '\r',
-                '\t',
-                '\v',
-            };
-
-            foreach (char escapeCharacter in allEscapes)
+            foreach (char escapeCharacter in charsToEscapes)
             {
                 if (escapeCharacter == characterToVerify)
                 {

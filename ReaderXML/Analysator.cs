@@ -1,4 +1,4 @@
-﻿using ReaderXML.common;
+﻿using ReaderXML.Common;
 
 namespace ReaderXML
 {

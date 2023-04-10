@@ -1,4 +1,4 @@
-﻿namespace ReaderXML.common
+﻿namespace ReaderXML.Common
 {
     public class AttributeXML
     {

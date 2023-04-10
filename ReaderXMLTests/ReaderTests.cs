@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ReaderXML;
-using ReaderXML.common;
+using ReaderXML.Common;
 using System;
 
 namespace ReaderXMLTests

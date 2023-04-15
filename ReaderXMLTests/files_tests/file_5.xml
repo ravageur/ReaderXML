@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<math>
+
+    <number nb="1"/>
+    <number nb=" 2"/>
+    <number nb="3 "/>
+    <number nb=" 4 "/>
+
+
+
+    <number nb='5'/>
+    <number nb=' 6'/>
+    <number nb='7 '/>
+    <number nb=' 8 '/>
+
+</math>

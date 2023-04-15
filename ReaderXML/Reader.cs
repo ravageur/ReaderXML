@@ -1,4 +1,5 @@
 ﻿using ReaderXML.Common;
+using ReaderXML.Analysers;
 
 namespace ReaderXML
 {
@@ -24,9 +25,9 @@ namespace ReaderXML
 
         private string _xml = "";
         private string _content = "";
-        private List<char> _flow = new() { ' ', ' ',  ' ', ' ', ' ', ' ', ' ' };
+        private readonly List<char> _flow = new() { ' ', ' ',  ' ', ' ', ' ', ' ', ' ' };
 
-        private readonly Analysator _analysator = new();
+        private readonly Analyser _analyser = new();
 
         private bool _isInComment = false;
         private bool _isInElement = false;
@@ -55,7 +56,7 @@ namespace ReaderXML
                     
                 }
 
-                return this._analysator.GetResult();
+                return this._analyser.GetResult();
             }
             
             return new ElementXML("FILE NOT READABLE");
@@ -88,7 +89,7 @@ namespace ReaderXML
 
                 if (this._flow[3] == '>' && this._flow[2] == '?')
                 {
-                    this._analysator.Analyze(this._content.Remove(1, 1), true, false);
+                    this._analyser.Analyze(this._content.Remove(1, 1), true, false);
                     this._content = "";
                     index++;
                     break;
@@ -169,7 +170,7 @@ namespace ReaderXML
 
                 if (contentTrimmed.Length > 1)
                 {
-                    this._analysator.Analyze(contentTrimmed, false, true);
+                    this._analyser.Analyze(contentTrimmed, false, true);
                 }
 
                 this._content = "<";
@@ -178,7 +179,7 @@ namespace ReaderXML
             else if (this.IsThereEndElementStart() && !this._isInElement)
             {
                 this._content = CleanString(this._content, false, true);
-                if (this._analysator.Analyze(this._content[..^1].Trim(), false, true))
+                if (this._analyser.Analyze(this._content[..^1].Trim(), false, true))
                 {
                     this._content = this._content[^1..];
                 }
@@ -188,7 +189,13 @@ namespace ReaderXML
             }
             else if (this.IsThereStartElementEnd() && this._isInElement)
             {
-                if (this._analysator.Analyze(this._content[..^1], true, false))
+                // This comment is a backup (A save)
+                //if (this._analysator.Analyze(this._content[..^1], true, false))
+                //{
+                //    this._content = "";
+                //}
+
+                if (this._analyser.Analyze(this._content, true, false))
                 {
                     this._content = "";
                 }
@@ -197,7 +204,7 @@ namespace ReaderXML
             }
             else if (this.IsThereEndElementEnd() && this._isInElement)
             {
-                if (this._analysator.Analyze(this._content, true, false))
+                if (this._analyser.Analyze(this._content, true, false))
                 {
                     this._content = "";
                 }
@@ -214,7 +221,15 @@ namespace ReaderXML
         /// <returns>A boolean</returns>
         private bool IsThereStartElementStart()
         {
-            return this._flow[3] == '<' && !((this._flow[2] == '\'' && this._flow[4] == '\'') || (this._flow[2] == '\"' && this._flow[4] == '\"')) && !(this._flow[4] == '/');
+            return this._flow[3] == '<' &&
+                !((this._flow[2] == '\'' &&
+                this._flow[4] == '\'') ||
+                
+
+
+                (this._flow[2] == '\"' &&
+                this._flow[4] == '\"')) &&
+                !(this._flow[4] == '/');
         }
 
 
@@ -225,7 +240,14 @@ namespace ReaderXML
         /// <returns>A boolean</returns>
         private bool IsThereStartElementEnd()
         {
-            return this._flow[3] == '>' && !((this._flow[2] == '\'' && this._flow[4] == '\'') || (this._flow[2] == '\"' && this._flow[4] == '\"'));
+            return this._flow[3] == '>' &&
+                !((this._flow[2] == '\'' &&
+                this._flow[4] == '\'') ||
+                
+                
+
+                (this._flow[2] == '\"' &&
+                this._flow[4] == '\"'));
         }
 
 
@@ -236,7 +258,13 @@ namespace ReaderXML
         /// <returns>A boolean</returns>
         private bool IsThereEndElementStart()
         {
-            return this._flow[3] == '<' && !(this._flow[4] == '\'' || this._flow[2] == '\"') && this._flow[4] == '/';
+            return this._flow[3] == '<' &&
+                !(this._flow[4] == '\'' ||
+                
+
+
+                this._flow[2] == '\"') &&
+                this._flow[4] == '/';
         }
 
 
@@ -247,7 +275,14 @@ namespace ReaderXML
         /// <returns>A boolean</returns>
         private bool IsThereEndElementEnd()
         {
-            return this._flow[3] == '>' && !((this._flow[2] == '\'' && this._flow[4] == '\'') || (this._flow[2] == '\"' && this._flow[4] == '\"'));
+            return this._flow[3] == '>' &&
+                !((this._flow[2] == '\'' &&
+                this._flow[4] == '\'') ||
+
+
+
+                (this._flow[2] == '\"' &&
+                this._flow[4] == '\"'));
         }
 
         private string CleanString(string stringToClean, bool cleanTag, bool cleanValue)
@@ -281,7 +316,7 @@ namespace ReaderXML
             {
                 for (int i = stringToClean.Length - 1; i >= 0; i--)
                 {
-                    if (!(stringToClean[i] == '<' || DetectAnyEscape(stringToClean[i])))
+                    if (!(stringToClean[i] == '<' || this.DetectAnyEscape(stringToClean[i])))
                     {
                         stringToClean = stringToClean[0..(i + 2)];
                         break;
@@ -290,7 +325,7 @@ namespace ReaderXML
 
                 for (int i = 0; i < stringToClean.Length; i++)
                 {
-                    if (!(stringToClean[i] == '>' || DetectAnyEscape(stringToClean[i])))
+                    if (!(stringToClean[i] == '>' || this.DetectAnyEscape(stringToClean[i])))
                     {
                         stringClean = stringToClean[i..];
                         break;
